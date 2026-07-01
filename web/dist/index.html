@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="color-scheme" content="light dark" />
+
+    <!-- SEO: the landing page is indexable; secret paste routes send noindex
+         headers + meta from the server and client router (spec §13). -->
+    <title>Encrypted Pastebin | Diff Checker</title>
+    <meta
+      name="description"
+      content="RedPaste is an anonymous, end-to-end encrypted pastebin. Share code and text with syntax highlighting for 30+ languages, burn-after-read, expiry, passphrases, and a built-in diff checker. Your content is encrypted in your browser, so the server never sees it."
+    />
+    <link rel="canonical" href="https://paste.720p.red/" />
+    <meta name="theme-color" content="#dc2626" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#0b0b0d" media="(prefers-color-scheme: dark)" />
+
+    <!-- Open Graph for the PRODUCT only. Never contains paste content (spec §13.4). -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="RedPaste" />
+    <meta property="og:title" content="RedPaste: Encrypted pastebin" />
+    <meta
+      property="og:description"
+      content="Anonymous, end-to-end encrypted pastes with syntax highlighting, burn-after-read, and a built-in diff checker."
+    />
+    <meta property="og:url" content="https://paste.720p.red/" />
+    <meta name="twitter:card" content="summary" />
+
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+
+    <!-- Structured data for the landing page (product/software). -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "RedPaste",
+        "applicationCategory": "DeveloperApplication",
+        "operatingSystem": "Any",
+        "description": "Anonymous, end-to-end encrypted pastebin with syntax highlighting, burn-after-read, expiry, passphrases, and a built-in diff checker.",
+        "offers": { "@type": "Offer", "price": "0" }
+      }
+    </script>
+
+    <!-- No-flash theme: synchronous same-origin script sets the theme before
+         first paint. External (not inline) to comply with the strict CSP. -->
+    <script src="/theme-init.js"></script>
+    <script type="module" crossorigin src="/assets/index-CLbmYLAD.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-9YbMXyen.css">
+  </head>
+  <body>
+    <div id="app"></div>
+    <noscript>RedPaste requires JavaScript to encrypt and decrypt content in your browser.</noscript>
+  </body>
+</html>

@@ -1,0 +1,55 @@
+# --- OSS split: keep the private automation API out of the public repo ---
+# The public tree keeps only the shared shape + a no-op stub so it compiles;
+# the real implementation, admin tooling, and operator docs stay private.
+internal/privateapi/server.go
+cmd/redpaste-admin/
+docs/private-api/
+*.private-token
+
+# --- OSS split: operator control panel. Its existence isn't disclosed
+# publicly (unlike privateapi, the public export excludes even the shared
+# shape + stub — see scripts/export-public.sh's explicit rsync exclude,
+# since gitignore alone can't distinguish "keep out of the private repo's
+# git history" from "keep out of the public export"). But adminpanel.go and
+# stub.go MUST stay committed here in the private repo: main.go always
+# imports this package (untagged builds link the stub), so a bare git clone
+# needs the shared shape to exist at all, exactly like internal/privateapi.go
+# and internal/privateapi/stub.go already do for the private API.
+internal/adminpanel/impl.go
+internal/adminpanel/auth.go
+internal/adminpanel/tokens.go
+internal/adminpanel/pastes.go
+internal/adminpanel/queries.go
+internal/adminpanel/queries_sqlite.go
+internal/adminpanel/queries_postgres.go
+internal/adminpanel/assets.go
+internal/adminpanel/ui/
+internal/adminauth/
+admin/
+docs/admin-panel/
+
+# --- Build artifacts ---
+/redpaste-server
+/redpaste-admin
+/dist/
+web/node_modules/
+*.tsbuildinfo
+# NOTE: web/dist IS committed on purpose — it lets `go build`/`go install` produce
+# a working UI without running Node. Vite empties it on each build.
+
+# --- Local data & secrets ---
+*.db
+*.db-shm
+*.db-wal
+.redpaste-pepper
+.env
+.env.local
+*.pem
+*.key
+
+# --- OS / editor ---
+.DS_Store
+*.log
+
+# --- Local AI-assistant tooling: never committed, never exported ---
+.claude/

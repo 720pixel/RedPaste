@@ -1,0 +1,36 @@
+# RedPaste systemd unit. Runs the single self-contained binary behind nginx.
+#
+# Install:
+#   sudo cp redpaste-server /usr/local/bin/
+#   sudo cp deploy/systemd/redpaste.service /etc/systemd/system/
+#   sudo mkdir -p /var/lib/redpaste && sudo cp .env /etc/redpaste.env
+#   sudo systemctl daemon-reload && sudo systemctl enable --now redpaste
+
+[Unit]
+Description=RedPaste encrypted pastebin
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=redpaste
+Group=redpaste
+EnvironmentFile=/etc/redpaste.env
+WorkingDirectory=/var/lib/redpaste
+ExecStart=/usr/local/bin/redpaste-server
+Restart=on-failure
+RestartSec=3
+
+# Hardening
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+PrivateTmp=true
+ReadWritePaths=/var/lib/redpaste
+AmbientCapabilities=
+CapabilityBoundingSet=
+RestrictAddressFamilies=AF_INET AF_INET6 AF_UNIX
+MemoryDenyWriteExecute=false
+
+[Install]
+WantedBy=multi-user.target

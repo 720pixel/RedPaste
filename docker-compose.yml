@@ -1,0 +1,39 @@
+# Full production-ish stack: RedPaste + Postgres. Put nginx/TLS in front of this
+# in a real deployment (see deploy/nginx). For a quick single-container run with
+# SQLite instead, just `docker run -p 8080:8080 ghcr.io/720pixel/redpaste`.
+
+services:
+  redpaste:
+    build: .
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    environment:
+      REDPASTE_ENV: production
+      REDPASTE_BASE_URL: ${REDPASTE_BASE_URL:-http://localhost:8080}
+      REDPASTE_LISTEN_ADDR: ":8080"
+      REDPASTE_DATABASE_URL: postgres://redpaste:${POSTGRES_PASSWORD:-redpaste}@db:5432/redpaste?sslmode=disable
+      REDPASTE_SERVER_PEPPER: ${REDPASTE_SERVER_PEPPER:?set REDPASTE_SERVER_PEPPER to a 32-byte hex string}
+      REDPASTE_TRUSTED_PROXY_CIDRS: ${REDPASTE_TRUSTED_PROXY_CIDRS:-}
+      REDPASTE_DEV_INSECURE: ${REDPASTE_DEV_INSECURE:-0}
+    depends_on:
+      db:
+        condition: service_healthy
+
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: redpaste
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-redpaste}
+      POSTGRES_DB: redpaste
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U redpaste"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  pgdata:

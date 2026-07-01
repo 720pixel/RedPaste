@@ -1,0 +1,169 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Self-hosted fonts only (CSP font-src 'self'). */
+@font-face {
+  font-family: "Space Grotesk";
+  font-style: normal;
+  font-weight: 500 700;
+  font-display: swap;
+  src: url("/fonts/space-grotesk-latin-700-normal.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url("/fonts/inter.woff2") format("woff2");
+}
+
+/* shadcn tokens, tuned to 720p.red: warm off-white / near-black, crimson accent. */
+@layer base {
+  :root,
+  :root[data-theme="light"] {
+    --background: 30 10% 96%;
+    --foreground: 0 3% 11%;
+    --card: 0 0% 100%;
+    --card-foreground: 0 3% 11%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 3% 11%;
+    --primary: 345 68% 38%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 24 9% 92%;
+    --secondary-foreground: 0 3% 11%;
+    --muted: 24 9% 92%;
+    --muted-foreground: 0 3% 34%;
+    --accent: 345 60% 95%;
+    --accent-foreground: 345 68% 30%;
+    --destructive: 345 68% 40%;
+    --destructive-foreground: 0 0% 100%;
+    --success: 152 60% 30%;
+    --border: 20 12% 85%;
+    --input: 20 12% 85%;
+    --ring: 345 68% 38%;
+    --radius: 0.7rem;
+    --glow-1: 345 75% 88%;
+    --glow-2: 30 20% 90%;
+  }
+
+  :root[data-theme="dark"] {
+    --background: 240 10% 4%;
+    --foreground: 240 12% 98%;
+    --card: 240 10% 6%;
+    --card-foreground: 240 12% 98%;
+    --popover: 240 10% 7%;
+    --popover-foreground: 240 12% 98%;
+    --primary: 348 72% 58%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 240 8% 12%;
+    --secondary-foreground: 240 12% 98%;
+    --muted: 240 8% 12%;
+    --muted-foreground: 240 8% 76%;
+    --accent: 240 8% 14%;
+    --accent-foreground: 240 10% 93%;
+    --destructive: 346 68% 58%;
+    --destructive-foreground: 0 0% 100%;
+    --success: 146 55% 62%;
+    --border: 240 8% 16%;
+    --input: 240 8% 18%;
+    --ring: 348 66% 52%;
+    --radius: 0.7rem;
+    --glow-1: 348 75% 34%;
+    --glow-2: 240 12% 12%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  html {
+    color-scheme: light;
+  }
+  html[data-theme="dark"] {
+    color-scheme: dark;
+  }
+  body {
+    @apply text-foreground font-sans antialiased;
+    font-feature-settings: "cv02", "cv03", "cv04";
+    background-color: hsl(var(--background));
+    background-image:
+      radial-gradient(ellipse 100% 70% at 50% -15%, hsl(var(--glow-1) / 0.9), transparent 70%),
+      radial-gradient(ellipse 80% 60% at 100% 115%, hsl(var(--glow-2) / 0.8), transparent 75%);
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+  }
+  html[data-theme="dark"] body {
+    background-image:
+      radial-gradient(ellipse 100% 70% at 50% -15%, hsl(var(--glow-1) / 0.65), transparent 70%),
+      radial-gradient(ellipse 80% 60% at 100% 115%, hsl(var(--glow-2) / 0.85), transparent 75%);
+  }
+  h1, h2, h3 {
+    @apply font-display tracking-tight;
+  }
+}
+
+/* CodeMirror: let it own its layout; we only theme surface + accent. Viewer
+   sizes to content (no giant empty area, so the horizontal scrollbar sits right
+   under the code). The live/edit surface opts into a tall min-height. */
+.cm-editor {
+  height: auto;
+  max-height: 78vh;
+  font-size: 13.5px;
+}
+.cm-host-big .cm-editor {
+  min-height: 60vh;
+}
+.cm-editor.cm-focused {
+  outline: none !important;
+}
+.cm-scroller {
+  font-family: theme("fontFamily.mono");
+  line-height: 1.6;
+  padding: 4px 0;
+}
+.cm-gutters {
+  background: transparent !important;
+  border-right: 1px solid hsl(var(--border)) !important;
+  color: hsl(var(--muted-foreground));
+}
+.cm-lineNumbers .cm-gutterElement {
+  padding: 0 12px 0 14px;
+  opacity: 0.7;
+}
+.cm-content {
+  padding: 8px 0;
+}
+.cm-line {
+  padding: 0 16px;
+}
+html[data-theme="light"] .cm-editor {
+  background: hsl(var(--card));
+}
+.cm-cursor {
+  border-left-color: hsl(var(--primary)) !important;
+}
+.cm-selectionBackground,
+.cm-focused .cm-selectionBackground {
+  background: hsl(var(--primary) / 0.18) !important;
+}
+
+/* Instant, readable code while the highlighter chunk loads: same metrics as CM
+   so the swap is seamless and the paste shows immediately. */
+.code-instant {
+  margin: 0;
+  max-height: 78vh;
+  overflow: auto;
+  padding: 8px 16px;
+  font-family: theme("fontFamily.mono");
+  font-size: 13.5px;
+  line-height: 1.6;
+  color: hsl(var(--foreground));
+  white-space: pre;
+  tab-size: 4;
+}
+.code-instant.wrap {
+  white-space: pre-wrap;
+  word-break: break-word;
+}

@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="850" height="172" viewBox="0 0 850 172" role="img" aria-label="RedPaste">
+  <style>
+    text { font-family: 'DejaVu Sans Mono','Menlo','Consolas','Courier New',monospace; font-size: 20px; font-weight: 700; white-space: pre; }
+  </style>
+  <text x="34" y="30" xml:space="preserve" fill="#FF6B6B">██████╗ ███████╗██████╗ ██████╗  █████╗ ███████╗████████╗███████╗</text>
+  <text x="34" y="54" xml:space="preserve" fill="#FF4040">██╔══██╗██╔════╝██╔══██╗██╔══██╗██╔══██╗██╔════╝╚══██╔══╝██╔════╝</text>
+  <text x="34" y="78" xml:space="preserve" fill="#F02222">██████╔╝█████╗  ██║  ██║██████╔╝███████║███████╗   ██║   █████╗  </text>
+  <text x="34" y="102" xml:space="preserve" fill="#CE1414">██╔══██╗██╔══╝  ██║  ██║██╔═══╝ ██╔══██║╚════██║   ██║   ██╔══╝  </text>
+  <text x="34" y="126" xml:space="preserve" fill="#A50E0E">██║  ██║███████╗██████╔╝██║     ██║  ██║███████║   ██║   ███████╗</text>
+  <text x="34" y="150" xml:space="preserve" fill="#7E0808">╚═╝  ╚═╝╚══════╝╚═════╝ ╚═╝     ╚═╝  ╚═╝╚══════╝   ╚═╝   ╚══════╝</text>
+</svg>
