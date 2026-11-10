@@ -40,6 +40,39 @@ jobs:
       - run: npm --prefix web run typecheck
       - run: npm --prefix web run build
 
+  # Smoke test of the documented container paths: the image with a fresh named
+  # volume (SQLite), and the compose stack (Postgres).
+  container:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Smoke script
+        run: |
+          cat > /tmp/smoke.sh <<'EOF'
+          set -eu
+          base=http://localhost:8080
+          for i in $(seq 1 60); do curl -fsS "$base/readyz" && break; sleep 2; done
+          curl -fsS "$base/" | grep -qi '<!doctype html'
+          slug=$(curl -fsS -X POST "$base/api/v1/pastes" -H 'Content-Type: application/json' \
+            -d '{"ciphertext":"c21va2U","cryptoMetadata":{"v":1},"policy":{"expiresInSeconds":3600},"ownerToken":"b3duZXI"}' | jq -r .slug)
+          test "$(curl -fsS -X POST "$base/api/v1/pastes/$slug/redeem" | jq -r .ciphertext)" = c21va2U
+          echo "round trip ok: $slug"
+          EOF
+      - name: docker run with a named volume
+        run: |
+          docker build -t redpaste .
+          docker run -d --name redpaste -p 8080:8080 -v redpaste:/data redpaste
+          sh /tmp/smoke.sh || { docker logs redpaste; exit 1; }
+          docker rm -f redpaste
+      - name: docker compose stack
+        env:
+          REDPASTE_DEV_INSECURE: "1"
+        run: |
+          export REDPASTE_SERVER_PEPPER=$(openssl rand -hex 32)
+          docker compose up -d --build
+          sh /tmp/smoke.sh || { docker compose logs; exit 1; }
+          docker compose down -v
+
   secret-scan:
     runs-on: ubuntu-latest
     steps:

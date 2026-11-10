@@ -5,7 +5,7 @@
 ### Encrypted on your device. Readable only by whoever holds the link.
 
 RedPaste is an anonymous, end-to-end encrypted pastebin. Your paste is
-encrypted in the browser before it ever leaves — the server only ever stores
+encrypted in the browser before it ever leaves, and the server only ever stores
 ciphertext. No accounts, no logins, no trackers.
 
 ![go](https://img.shields.io/badge/built%20with-Go-00ADD8?style=for-the-badge&logo=go&logoColor=white)
@@ -17,7 +17,7 @@ ciphertext. No accounts, no logins, no trackers.
 
 ---
 
-RedPaste ships as a single self-contained binary with the frontend embedded —
+RedPaste ships as a single self-contained binary with the frontend embedded:
 one process, embedded SQLite by default, nothing else to run.
 
 Use it to:
@@ -41,35 +41,58 @@ Use it to:
 
 ## Quick start
 
-**Docker, one command:**
-
-```bash
-docker run -d -p 8080:8080 -v redpaste:/data ghcr.io/720pixel/redpaste
-```
-
-Open http://localhost:8080. The `redpaste` volume keeps your data (and an
-auto-generated capability key) across restarts.
-
-**Prebuilt binary:**
+**Prebuilt binary (Linux, macOS):**
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/720pixel/RedPaste/main/install.sh | sh
 redpaste-server
 ```
 
+Open http://localhost:8080. The script picks the binary for your OS and CPU
+(amd64 or arm64) from the [latest release](https://github.com/720pixel/RedPaste/releases/latest),
+checks it against `checksums.txt` and installs it to `~/.local/bin`. Set
+`BINDIR` to install elsewhere and `VERSION=v1.0.0` to pin a release. The server
+keeps `redpaste.db` and its `.redpaste-pepper` key in the directory you start it
+from; set `REDPASTE_SQLITE_PATH` to put them somewhere else.
+
+On Windows, download `redpaste-server_windows_amd64.exe` from the release page
+and run it.
+
+**Docker, one command:**
+
+```bash
+docker run -d -p 8080:8080 -v redpaste:/data ghcr.io/720pixel/redpaste:latest
+```
+
+Open http://localhost:8080. The `redpaste` volume keeps your data (and an
+auto-generated capability key) across restarts.
+
+To build the image yourself instead of pulling it:
+
+```bash
+git clone https://github.com/720pixel/RedPaste.git
+cd RedPaste
+docker build -t redpaste .
+docker run -d -p 8080:8080 -v redpaste:/data redpaste
+```
+
 ## Run it
 
 ### Docker Compose
 
-A small production stack (RedPaste + Postgres). It won't start without a
-pepper:
+A small production stack (RedPaste + Postgres), built from this checkout.
+Production mode refuses to start without a pepper and an https base URL:
 
 ```bash
 export REDPASTE_SERVER_PEPPER=$(openssl rand -hex 32)
+export REDPASTE_BASE_URL=https://paste.example.com
 docker compose up -d
 ```
 
-Put a TLS reverse proxy in front for a real deployment — see `deploy/nginx`.
+Put a TLS reverse proxy in front that serves that origin and forwards to port
+8080; `deploy/nginx` has an example. To try the stack on plain
+http://localhost:8080 first, also `export REDPASTE_DEV_INSECURE=1` and leave
+`REDPASTE_BASE_URL` unset.
 
 ### From source
 
@@ -89,7 +112,7 @@ make dev
 
 ## Configuration
 
-Everything is configured through `REDPASTE_*` environment variables — see
+Everything is configured through `REDPASTE_*` environment variables. See
 [`.env.example`](.env.example) for the full list with comments. The
 essentials:
 
